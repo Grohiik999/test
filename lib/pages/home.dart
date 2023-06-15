@@ -105,12 +105,7 @@ class _HomePageState extends State<HomePage> {
               // ],
           ),
 
-          Expanded(
-            child: Container(
-              color: Colors.white, // Warna latar belakang konten
-              // Tambahkan widget lain di sini
-            ),
-          ),
+          
         ],
       ),
     );
