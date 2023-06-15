@@ -1,18 +1,32 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../services/google_auth.dart';
 import 'login.dart';
+import 'dart:io';
 
 class Profile extends StatefulWidget {
   final UserCredential userCredential;
   const Profile({super.key, required this.userCredential});
+  
 
   @override
   State<Profile> createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
+  
+  File? _image;
+
+  Future<void> _getImageFromCamera() async {
+    final pickedImage = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,10 +81,17 @@ class _ProfileState extends State<Profile> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(padding: EdgeInsets.only(top: 30.0),
-                    child:  Image.asset('images/profile.png',
-                    // width: 700.0,
-                    height: 100.0,),
-                    ),
+                    child: 
+                      _image == null
+                      ? Image.asset("images/profile.png",
+                        width: 100.0,
+                        height: 100.0,
+                      ) : Image.file(
+                        _image!,
+                        width: 100,
+                        height: 100,
+                      )
+                          ),
                     Container(
                       alignment: Alignment.centerLeft,
                       child: Row(
@@ -151,12 +172,21 @@ class _ProfileState extends State<Profile> {
               ],
             ),
             ),
-                Padding(padding: EdgeInsets.only(top: 30.0),
+            
+                Padding(padding: EdgeInsets.only(top: 750.0,left: 150.0),
+                    child:InkWell(
+              onTap: _getImageFromCamera,
+              child: SizedBox(
+                child: GestureDetector(
+                    onTap: _getImageFromCamera,
                     child: Image.asset(
-                      'images/Splash_screen.png',
+                      'images/camera_icon.png',
                       width: 100.0,
                       height: 100.0,
                     ),),
+              ),
+            ), 
+            ),
 
           Container(
             child: Row(
@@ -240,7 +270,7 @@ class _ProfileState extends State<Profile> {
                         child: Container(
                           alignment: Alignment.center,
                           child: Text(
-                            "Log Out",
+                            "Log Out         ",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18.0,
