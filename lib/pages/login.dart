@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              "Firebase app",
+              "Login Jember Adventure",
               style: TextStyle(fontSize: 30),
             ),
             ElevatedButton(
