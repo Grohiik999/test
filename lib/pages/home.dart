@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tugas_api/pages/login.dart';
@@ -17,7 +18,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  
   @override
+
+  Future<List<QueryDocumentSnapshot>> fetchData() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('gambar').get();
+    return querySnapshot.docs;
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       body: 
@@ -85,17 +94,43 @@ class _HomePageState extends State<HomePage> {
                   }
                 });
               },
-                            child: SizedBox(
-                              width: 100,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 10.0),
-                                child: Image.asset(
-                                  'images/profile.png',
-                                  width: 60,
-                                  height: 60,
-                                ),
-                              ),
-                            ),
+                    child: FutureBuilder<List<QueryDocumentSnapshot>>(future: fetchData(),
+                    builder: (BuildContext context,AsyncSnapshot<List<QueryDocumentSnapshot>>snapshot) {
+                      if (snapshot.hasData) {
+                        List<QueryDocumentSnapshot> data = snapshot.data!;
+                        List<Widget> imageWidgets = data.map((document) {
+                        Map<String, dynamic> documentData = document.data() as Map<String, dynamic>;
+                        return documentData['images'] == "" 
+                        ? Image.asset('images/profile.png',
+                        width: 100.0,
+                        height: 100.0,) :
+                        Image.network(
+                          documentData['images'],
+                          width: 70,
+                          height: 70,
+                        );
+                      }).toList();
+                      return Wrap(
+                        spacing: 10.0,
+                        runSpacing: 10.0,
+                        children: imageWidgets,
+                      );
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    },)
+                    
+                            // SizedBox(
+                            //   width: 100,
+                            //   child: Padding(
+                            //     padding: EdgeInsets.only(top: 10.0),
+                            //     child: Image.asset(
+                            //       'images/profile.png',
+                            //       width: 60,
+                            //       height: 60,
+                            //     ),
+                            //   ),
+                            // ),
                           ),
                         ],
                       ),
@@ -248,6 +283,52 @@ class _HomePageState extends State<HomePage> {
     ],
   ),
 ),
+  Container(
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Container(
+        margin: EdgeInsets.only(top: 10.0),
+        width: 350.0,
+        height: 40.0,
+        decoration: BoxDecoration(
+          color: Color(0xffB4E9FF),
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        padding: EdgeInsets.only(left: 30.0),
+        child: Material(
+          color: Colors.transparent,
+          child: Ink(
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20.0),
+              onTap: () {
+                // Aksi yang dijalankan saat tombol diklik
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TelukLove()),
+                );
+              },
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "map",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+),        
   Container(
   child: Row(
     mainAxisAlignment: MainAxisAlignment.center,

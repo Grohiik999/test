@@ -21,7 +21,6 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   
   String imageUrl = '';
-  File? _image;
   bool showLocalFile = false;
 
   
@@ -97,6 +96,12 @@ profileCollection.add(dataToSend);
 
 }
 
+Future<List<QueryDocumentSnapshot>> fetchData() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('gambar').get();
+    return querySnapshot.docs;
+  }
+
 
 
   @override
@@ -152,17 +157,42 @@ profileCollection.add(dataToSend);
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(padding: EdgeInsets.only(top: 30.0),
-                    child: 
-                      imageUrl == "" 
-                      ? Image.asset("images/profile.png",
+                    Padding(padding: EdgeInsets.only(top: 40.0),
+                    child: FutureBuilder<List<QueryDocumentSnapshot>>(future: fetchData(),
+                    builder: (BuildContext context,AsyncSnapshot<List<QueryDocumentSnapshot>>snapshot) {
+                      if (snapshot.hasData) {
+                        List<QueryDocumentSnapshot> data = snapshot.data!;
+                        List<Widget> imageWidgets = data.map((document) {
+                        Map<String, dynamic> documentData = document.data() as Map<String, dynamic>;
+                        return documentData['images'] == "" 
+                        ? Image.asset('images/profile.png',
                         width: 100.0,
-                        height: 100.0,
-                      ) : Image.network(
-                        imageUrl,
-                        width: 100,
-                        height: 100,
-                      )
+                        height: 100.0,) :
+                        Image.network(
+                          documentData['images'],
+                          width: 100,
+                          height: 100,
+                        );
+                      }).toList();
+                      return Wrap(
+                        spacing: 10.0,
+                        runSpacing: 10.0,
+                        children: imageWidgets,
+                      );
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    },)
+                    
+                      // imageUrl == "" 
+                      // ? Image.asset("images/profile.png",
+                      //   width: 100.0,
+                      //   height: 100.0,
+                      // ) : Image.network(
+                      //   imageUrl,
+                      //   width: 100,
+                      //   height: 100,
+                      // )
                           ),
                     Container(
                       alignment: Alignment.centerLeft,
