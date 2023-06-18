@@ -69,7 +69,11 @@ class _MyMapScreenState extends State<MyMapScreen> {
                     onPressed: () {
                       addMarker(locationController.text);
                     },
-                    child: Icon(Icons.add),
+                    child: Image.asset(
+                      'images/marker.png',
+                      height: 40.0,
+                      width: 40.0,
+                    ),
                   ),
                 ),
               ],

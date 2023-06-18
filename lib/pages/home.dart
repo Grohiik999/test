@@ -102,31 +102,65 @@ class _HomePageState extends State<HomePage> {
                   }
                 });
               },
-                    child: FutureBuilder<List<QueryDocumentSnapshot>>(future: fetchData(),
-                    builder: (BuildContext context,AsyncSnapshot<List<QueryDocumentSnapshot>>snapshot) {
-                      if (snapshot.hasData) {
-                        List<QueryDocumentSnapshot> data = snapshot.data!;
-                        List<Widget> imageWidgets = data.map((document) {
-                        Map<String, dynamic> documentData = document.data() as Map<String, dynamic>;
-                        return documentData['images'] == "" 
-                        ? Image.asset('images/profile.png',
-                        width: 100.0,
-                        height: 100.0,) :
-                        Image.network(
-                          documentData['images'],
-                          width: 70,
-                          height: 70,
-                        );
-                      }).toList();
-                      return Wrap(
-                        spacing: 10.0,
-                        runSpacing: 10.0,
-                        children: imageWidgets,
-                      );
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    },)
+              
+              child: FutureBuilder<List<QueryDocumentSnapshot>>(
+                future: fetchData(),
+                builder: (BuildContext context, AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot) {
+                  if (snapshot.hasData) {
+                    List<QueryDocumentSnapshot> data = snapshot.data!;
+                    List<Widget> imageWidgets = data.map((document) {
+                      Map<String, dynamic> documentData = document.data() as Map<String, dynamic>;
+                      return documentData['images'] == ""
+                          ? Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black, // Warna garis tepi
+                                  width: 2.0, // Lebar garis tepi
+                                ),
+                                color: Colors.white, // Warna latar belakang putih
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50.0), // Ukuran border circular
+                                child: Image.asset(
+                                  'images/profile.png',
+                                  width: 100.0,
+                                  height: 100.0,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Color(0xff146C94), // Warna garis tepi
+                                  width: 5.0, // Lebar garis tepi
+                                ),
+                                color: Colors.white, // Warna latar belakang putih
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100.0), // Ukuran border circular
+                                child: Image.network(
+                                  documentData['images'],
+                                  width: 60,
+                                  height: 60,
+                                ),
+                              ),
+                            );
+                    }).toList();
+                    return Wrap(
+                      spacing: 10.0,
+                      runSpacing: 10.0,
+                      children: imageWidgets,
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
+              ),
+
+
+
                     
                             // SizedBox(
                             //   width: 100,
@@ -153,9 +187,9 @@ class _HomePageState extends State<HomePage> {
 // wisata rekomendasi
 
   Container(
-  margin: EdgeInsets.only(top: 30.0),
+  margin: EdgeInsets.only(top: 20.0),
   width: 350.0,
-  height: 390.0,
+  height: 350.0,
   decoration: BoxDecoration(
     color: Color(0xffB4E9FF),
     borderRadius: BorderRadius.circular(20.0),
@@ -172,7 +206,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       Positioned(
-        top: 300.0,
+        top: 260.0,
         left: 150.0,
         child: GestureDetector(
           onTap: () {
@@ -341,7 +375,7 @@ class _HomePageState extends State<HomePage> {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Container(
-        margin: EdgeInsets.only(top: 10.0),
+        margin: EdgeInsets.only(top: 10.0, bottom: 40.0),
         width: 350.0,
         height: 40.0,
         decoration: BoxDecoration(

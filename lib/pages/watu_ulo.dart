@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class WatuUlo extends StatelessWidget {
+
+class WatuUlo extends StatefulWidget {
   const WatuUlo({super.key});
+
+  @override
+  State<WatuUlo> createState() => _WatuUloState();
+}
+
+class _WatuUloState extends State<WatuUlo> {
+
+  void openMap() async {
+  double latitude = -8.1721; // Koordinat latitude yang sudah ditentukan
+  double longitude = 113.7007; // Koordinat longitude yang sudah ditentukan
+  
+  String url = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Tidak dapat membuka aplikasi peta.';
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -125,26 +146,23 @@ class WatuUlo extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(20.0),
-                        onTap: () {
-                          // Aksi yang dijalankan saat tombol diklik
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => WatuUlo()),
-                          );
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "RUTE       ",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
+            borderRadius: BorderRadius.circular(20.0),
+            onTap: () {
+              openMap(); // Panggil fungsi openMap saat tombol diklik
+            },
+            child: Container(
+              alignment: Alignment.center,
+              child: Text(
+                "RUTE       ",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
                     ),
                   ),
                 ),
