@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tugas_api/pages/login.dart';
+import 'package:tugas_api/pages/map.dart';
 import 'package:tugas_api/pages/papuma.dart';
 import 'package:tugas_api/pages/profile.dart';
 import 'package:tugas_api/pages/sukorambi.dart';
@@ -19,8 +23,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  GoogleMapController? mapController;
   
   @override
+  void initState() {
+    super.initState();
+  }
 
   Future<List<QueryDocumentSnapshot>> fetchData() async {
     QuerySnapshot querySnapshot =
@@ -143,6 +151,50 @@ class _HomePageState extends State<HomePage> {
           ),
 
 // wisata rekomendasi
+
+  Container(
+  margin: EdgeInsets.only(top: 30.0),
+  width: 350.0,
+  height: 390.0,
+  decoration: BoxDecoration(
+    color: Color(0xffB4E9FF),
+    borderRadius: BorderRadius.circular(20.0),
+  ),
+  child: Stack(
+    children: [
+      GoogleMap(
+        onMapCreated: (controller) {
+          mapController = controller;
+        },
+        initialCameraPosition: CameraPosition(
+          target: LatLng(-8.1721, 113.7007), // Koordinat Jember
+          zoom: 15.0,
+        ),
+      ),
+      Positioned(
+        top: 300.0,
+        left: 150.0,
+        child: GestureDetector(
+          onTap: () {
+            // Aksi yang dijalankan saat gambar diklik
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyMapScreen()),
+            );
+          },
+          child: Image.asset(
+            'images/map.png', // Path dan nama file gambar
+            width: 70.0,
+            height: 70.0,
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+
+
+
 
   Container(
   child: Row(
@@ -283,52 +335,7 @@ class _HomePageState extends State<HomePage> {
     ],
   ),
 ),
-  Container(
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Container(
-        margin: EdgeInsets.only(top: 10.0),
-        width: 350.0,
-        height: 40.0,
-        decoration: BoxDecoration(
-          color: Color(0xffB4E9FF),
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        padding: EdgeInsets.only(left: 30.0),
-        child: Material(
-          color: Colors.transparent,
-          child: Ink(
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20.0),
-              onTap: () {
-                // Aksi yang dijalankan saat tombol diklik
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TelukLove()),
-                );
-              },
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "map",
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ],
-  ),
-),        
+  
   Container(
   child: Row(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -374,7 +381,10 @@ class _HomePageState extends State<HomePage> {
       ),
     ],
   ),
-),        
+),    
+
+// map asdasdasdasdadasdadsadddddddddd
+        
         ],
       ),
         ],
