@@ -130,51 +130,6 @@ class _WatuUloState extends State<WatuUlo> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: 700.0),
-                  width: 330.0,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    color: Color(0xff19A7CE),
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  padding: EdgeInsets.only(left: 30.0),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: InkWell(
-            borderRadius: BorderRadius.circular(20.0),
-            onTap: () {
-              openMap(); // Panggil fungsi openMap saat tombol diklik
-            },
-            child: Container(
-              alignment: Alignment.center,
-              child: Text(
-                "RUTE       ",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            ),
-
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
                   margin: EdgeInsets.only(top: 760.0),
                   width: 330.0,
                   height: 40.0,

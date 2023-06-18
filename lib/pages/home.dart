@@ -124,8 +124,8 @@ class _HomePageState extends State<HomePage> {
                                 borderRadius: BorderRadius.circular(50.0), // Ukuran border circular
                                 child: Image.asset(
                                   'images/profile.png',
-                                  width: 100.0,
-                                  height: 100.0,
+                                  width: 60.0,
+                                  height: 60.0,
                                 ),
                               ),
                             )

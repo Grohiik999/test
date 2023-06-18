@@ -23,54 +23,36 @@ class _ProfileState extends State<Profile> {
   String imageUrl = '';
   bool showLocalFile = false;
 
-  
 
-  // Future<void> _getImageFromCamera() async {
-  //   final pickedImage = await ImagePicker().pickImage(source: ImageSource.camera);
-  //   if (pickedImage != null) {
-  //     setState(() {
-  //       _image = File(pickedImage.path);
-  //     });
-  //   }
-  // }
+// void pickAndUploadImage() async {
+//   final image = await ImagePicker().pickImage(source: ImageSource.camera,
+//     maxWidth: 100.0,
+//     maxHeight: 100.0,
+//   );
 
-//   Future<void> pickAndUploadImage() async {
-//   /*Langkah 1: Ambil gambar*/
-//   ImagePicker imagePicker = ImagePicker();
-//   XFile? file = await imagePicker.pickImage(source: ImageSource.camera);
-//   print('${file?.path}');
+//   Reference ref = FirebaseStorage.instance.ref().child('profilepic.jpg');
 
-//   if (file == null) return;
+//   await ref.putFile(File(image!.path));
+//   ref.getDownloadURL().then((value) => {
+//     print(value),
+//     setState(() {
+//       imageUrl = value;
+//     })
+//   });
 
-//   /*Langkah 2: Unggah ke Firebase Storage*/
-//   var fileName = widget.userCredential.user!.email.toString() + '.jpg';
-//   Reference storageReference =
-//       FirebaseStorage.instance.ref().child('images').child(fileName);
+//   FirebaseFirestore firestore = FirebaseFirestore.instance;
+//   CollectionReference profileCollection = firestore.collection('gambar');
 
-//   try {
-//     await storageReference.putFile(File(file.path));
-//     String imageUrl = await storageReference.getDownloadURL();
-//     print('Gambar diunggah: $imageUrl');
+//   Map<String, dynamic> dataToSend = {
+//   'images': imageUrl,
+// };
 
-//     /*Langkah 3: Kirim data gambar ke Firestore*/
-//     FirebaseFirestore firestore = FirebaseFirestore.instance;
-//     Map<String, dynamic> imageData = {
-//       'gambar': imageUrl,
-//     };
-
-//     // Kirim data gambar ke koleksi 'images' dengan dokumen baru yang secara otomatis dihasilkan ID-nya
-//     firestore.collection('images').add(imageData).then((DocumentReference document) {
-//       print('Data gambar berhasil dikirim dengan ID: ${document.id}');
-//     }).catchError((error) {
-//       print('Gagal mengirim data gambar: $error');
-//     });
-//   } catch (error) {
-//     print('Gagal mengunggah gambar: $error');
-//   }
+// profileCollection.add(dataToSend);
 // }
 
 void pickAndUploadImage() async {
-  final image = await ImagePicker().pickImage(source: ImageSource.camera,
+  final image = await ImagePicker().pickImage(
+    source: ImageSource.camera,
     maxWidth: 100.0,
     maxHeight: 100.0,
   );
@@ -78,23 +60,27 @@ void pickAndUploadImage() async {
   Reference ref = FirebaseStorage.instance.ref().child('profilepic.jpg');
 
   await ref.putFile(File(image!.path));
-  ref.getDownloadURL().then((value) => {
-    print(value),
-    setState(() {
-      imageUrl = value;
-    })
+  String imageUrl = await ref.getDownloadURL();
+
+  setState(() {
+    imageUrl = imageUrl;
   });
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference profileCollection = firestore.collection('gambar');
 
-  Map<String, dynamic> dataToSend = {
-  'images': imageUrl,
-};
+  String documentId = 'ZCVNfulvdfm7QdZaVIpx';
+  Map<String, dynamic> dataToUpdate = {
+    'images': imageUrl,
+  };
 
-profileCollection.add(dataToSend);
-
+  profileCollection.doc(documentId).update(dataToUpdate).then((_) {
+    print('Gambar berhasil diperbarui di Firestore.');
+  }).catchError((error) {
+    print('Gagal memperbarui gambar di Firestore: $error');
+  });
 }
+
 
 Future<List<QueryDocumentSnapshot>> fetchData() async {
     QuerySnapshot querySnapshot =
@@ -159,70 +145,61 @@ Future<List<QueryDocumentSnapshot>> fetchData() async {
                   children: [
                     Padding(padding: EdgeInsets.only(top: 40.0),
                     child: FutureBuilder<List<QueryDocumentSnapshot>>(
-                future: fetchData(),
-                builder: (BuildContext context, AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot) {
-                  if (snapshot.hasData) {
-                    List<QueryDocumentSnapshot> data = snapshot.data!;
-                    List<Widget> imageWidgets = data.map((document) {
-                      Map<String, dynamic> documentData = document.data() as Map<String, dynamic>;
-                      return documentData['images'] == ""
-                          ? Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black, // Warna garis tepi
-                                  width: 2.0, // Lebar garis tepi
-                                ),
-                                color: Colors.white, // Warna latar belakang putih
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50.0), // Ukuran border circular
-                                child: Image.asset(
-                                  'images/profile.png',
-                                  width: 100.0,
-                                  height: 100.0,
-                                ),
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Color(0xff146C94), // Warna garis tepi
-                                  width: 5.0, // Lebar garis tepi
-                                ),
-                                color: Colors.white, // Warna latar belakang putih
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(100.0), // Ukuran border circular
-                                child: Image.network(
-                                  documentData['images'],
-                                  width: 60,
-                                  height: 60,
-                                ),
-                              ),
-                            );
-                    }).toList();
-                    return Wrap(
-                      spacing: 10.0,
-                      runSpacing: 10.0,
-                      children: imageWidgets,
-                    );
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              ),
-                    
-                      // imageUrl == "" 
-                      // ? Image.asset("images/profile.png",
-                      //   width: 100.0,
-                      //   height: 100.0,
-                      // ) : Image.network(
-                      //   imageUrl,
-                      //   width: 100,
-                      //   height: 100,
-                      // )
+  future: fetchData(),
+  builder: (BuildContext context, AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot) {
+    if (snapshot.hasData) {
+      List<QueryDocumentSnapshot> data = snapshot.data!;
+      List<Widget> imageWidgets = data.map((document) {
+        Map<String, dynamic> documentData = document.data() as Map<String, dynamic>;
+        return documentData['images'] == ""
+            ? Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2.0,
+                  ),
+                  color: Colors.white,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50.0),
+                  child: Image.asset(
+                    'images/profile.png',
+                    width: 50.0,
+                    height: 50.0,
+                  ),
+                ),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Color(0xff146C94),
+                    width: 5.0,
+                  ),
+                  color: Colors.white,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100.0),
+                  child: Image.network(
+                    documentData['images'],
+                    width: 60,
+                    height: 60,
+                  ),
+                ),
+              );
+      }).toList();
+      return Wrap(
+        spacing: 10.0,
+        runSpacing: 10.0,
+        children: imageWidgets,
+      );
+    } else {
+      return CircularProgressIndicator();
+    }
+  },
+),
+
                           ),
                     Container(
                       alignment: Alignment.centerLeft,

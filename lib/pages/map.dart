@@ -36,7 +36,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Peta dengan Mark dan Inputan Wilayah'),
+        title: Text('Maps'),
       ),
       body: Column(
         children: [
@@ -46,7 +46,7 @@ class _MyMapScreenState extends State<MyMapScreen> {
             child: TextFormField(
               controller: locationController,
               decoration: InputDecoration(
-                labelText: 'Wilayah',
+                labelText: 'Pencarian',
                 border: OutlineInputBorder(),
               ),
             ),
